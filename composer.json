@@ -1,0 +1,26 @@
+{
+    "name": "miladzamir/sweetauth",
+    "description": "A user authentication management system",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Milad Dehghan",
+            "email": "milawddehghan@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "MiladZamir\\SweetAuth\\" : "src/"
+        }
+    },
+    "extra": {
+        "laravel" : {
+            "providers" : [
+                "MiladZamir\\SweetAuth\\SweetAuthServiceProvider"
+            ]
+        }
+    }
+}
