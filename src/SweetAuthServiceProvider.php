@@ -2,6 +2,8 @@
 
 namespace MiladZamir\SweetAuth;
 
+use MiladZamir\SweetAuth\Http\Middleware\IsReceiveAndStored;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class SweetAuthServiceProvider extends ServiceProvider
@@ -14,6 +16,9 @@ class SweetAuthServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/create_sweet_one_time_passwords.php.stub' => database_path('migrations/' . '2020_11_01_174513_create_sweet_one_time_passwords_table.php')
             ]);
         }
+
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('is.receive.and.stored', IsReceiveAndStored::class);
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
