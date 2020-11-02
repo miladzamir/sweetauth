@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use MiladZamir\Orange\Orange;
 use MiladZamir\SweetAuth\Models\SweetOneTimePassword;
+use Illuminate\Support\Facades\Session;
 
 class ReceiveRequestController extends Controller
 {
@@ -31,29 +33,29 @@ class ReceiveRequestController extends Controller
 
         $phoneInformation = SweetOneTimePassword::where('phone', $request->$phoneInputName)->first();
 
-
-        if ($phoneInformation->is_block == true) {
-            if (Carbon::now()->timestamp - $phoneInformation->last_send_at->timestamp > config('sweetauth')['oneTimePassword']['delay_unblock']) {
-                $phoneInformation->update([
-                    'is_block' => false,
-                    'request_times' => 1
-                ]);
+        if ($phoneInformation != null) {
+            if ($phoneInformation->is_block == true) {
+                if (Carbon::now()->timestamp - $phoneInformation->last_send_at->timestamp > config('sweetauth')['oneTimePassword']['delay_unblock']) {
+                    $phoneInformation->update([
+                        'is_block' => false,
+                        'request_times' => 1
+                    ]);
+                } else {
+                    $remainingAlertMessage = $this->getRemainingTimeMessage($phoneInformation, 'block_user_message');
+                    $validator->errors()->add('block_user', $remainingAlertMessage);
+                    return View::make(config('sweetauth')['oneTimePassword']['phone_input_page_src'])
+                        ->with($phoneInputName, $request->$phoneInputName)
+                        ->withErrors($validator);
+                }
             } else {
-                $remainingAlertMessage = $this->getRemainingTimeMessage($phoneInformation, 'block_user_message');
-                $validator->errors()->add('block_user', $remainingAlertMessage);
-                return View::make(config('sweetauth')['oneTimePassword']['phone_input_page_src'])
-                    ->with($phoneInputName, $request->$phoneInputName)
-                    ->withErrors($validator);
-            }
-        } else {
-            if (Carbon::now()->timestamp - $phoneInformation->last_send_at->timestamp < config('sweetauth')['oneTimePassword']['delay_between_request'] && $phoneInformation->request_times > config('sweetauth')['oneTimePassword']['delay_count']) {
-                $phoneInformation->update([
-                    'is_block' => true,
-                    'request_times' => 1
-                ]);
+                if (Carbon::now()->timestamp - $phoneInformation->last_send_at->timestamp < config('sweetauth')['oneTimePassword']['delay_between_request'] && $phoneInformation->request_times > config('sweetauth')['oneTimePassword']['delay_count']) {
+                    $phoneInformation->update([
+                        'is_block' => true,
+                        'request_times' => 1
+                    ]);
+                }
             }
         }
-
 
         $randomDigitNumber = $this->createRandomDigitNumber();
 
@@ -78,11 +80,17 @@ class ReceiveRequestController extends Controller
         }
 
 
+        $rToken = $this->createToken();
+
         if ($phoneInformation != null) {
-            $this->UpdateOneTimePassword($phoneInputName, $request, $randomDigitNumber);
-        }else{
-            $this->createNewOneTimePassword($phoneInputName, $request, $randomDigitNumber);
+            $this->UpdateOneTimePassword($phoneInputName, $request, $randomDigitNumber, $rToken);
+        } else {
+            $this->createNewOneTimePassword($phoneInputName, $request, $randomDigitNumber, $rToken);
         }
+
+        return Redirect::route('verify')->with('rToken', $rToken);
+        //return View::make('verify')->with(compact('rToken'));
+        //return redirect()->route('verify')->with(compact('rToken'));
 
     }
 
@@ -127,12 +135,14 @@ class ReceiveRequestController extends Controller
      * @param Request $request
      * @param int $randomDigitNumber
      */
-    private function createNewOneTimePassword($phoneInputName, Request $request, int $randomDigitNumber): void
+    private function createNewOneTimePassword($phoneInputName, Request $request, int $randomDigitNumber, $rToken): void
     {
         SweetOneTimePassword::create([
             'phone' => $request->$phoneInputName,
             'token' => $randomDigitNumber,
-            'last_send_at' => Carbon::now()->timestamp
+            'last_step_complete_at' => Carbon::now(),
+            'last_send_at' => Carbon::now(),
+            'r_token' => $rToken
         ]);
     }
 
@@ -141,12 +151,23 @@ class ReceiveRequestController extends Controller
      * @param Request $request
      * @param int $randomDigitNumber
      */
-    private function UpdateOneTimePassword($phoneInputName, Request $request, int $randomDigitNumber): void
+    private function UpdateOneTimePassword($phoneInputName, Request $request, int $randomDigitNumber, $rToken): void
     {
         SweetOneTimePassword::where('phone', $request->$phoneInputName)->update([
             'token' => $randomDigitNumber,
             'request_times' => DB::raw('request_times + 1'),
-            'last_send_at' => Carbon::now()
+            'last_step_complete_at' => Carbon::now(),
+            'last_send_at' => Carbon::now(),
+            'r_token' => $rToken
         ]);
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    private function createToken(): string
+    {
+        return bin2hex(random_bytes(24));
     }
 }
