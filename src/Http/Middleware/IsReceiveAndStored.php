@@ -17,10 +17,10 @@ class IsReceiveAndStored
      */
     public function handle($request, Closure $next)
     {
-        if (true) {
+        if (session()->has('isReceiveAndStored')) {
             return $next($request);
         }
 
-        return View::make(config('sweetauth')['oneTimePassword']['phone_input_page_src']);
+        return redirect()->route(config('sweetauth.oneTimePassword.register_route_name'));
     }
 }
