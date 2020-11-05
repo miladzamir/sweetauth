@@ -1,18 +1,29 @@
 <?php
+//'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
 return [
     'registerMethod' => 'otp',
-    'validate' => true ,
+    'validateRules' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
+    'tokenValidateRules' => ['required', 'numeric'],
+    'completeRegisterRules' => ['required' ,'min:6' , 'confirmed'],
     'oneTimePassword' => [
         'phone_input' => 'phone',
-        'phone_input_page_src' => 'test',
+        'token_input' => 'token',
+        'password_input' => 'password',
+        'phone_input_page_src' => 'register',
+        'register_route_name' => 'auth',
+        'verify_route_name' => 'verify',
+        'complete_register_route_name' => 'register',
         'code_length' => 4,
         'sms_template' => 'verify',
         'sms_failed_message' => 'Text Messages Are Not Delivered. Try Again',
         'block_user_message' => 'Spam protection detected!!!! after :10: second',
         'delay_between_request' => 60,
-        'delay_count' => 3,
+        'delay_count' => 60,
         'delay_unblock' => 10,
-        'delay_allowed' => 1,
-        'delay_allowed_message' => 'wait :1: second to next request'
+        'delay_allowed' => 20,
+        'delay_allowed_message' => 'wait :20: second to next request',
+        'accept_token_scope' => 60,
+        'accept_token_scope_message' => 'زمان مجاز وارد کردن کد به پایان رسید دوباره !',
+        'wrong_token_message' => 'code is wrong try a again!'
     ]
 ];
