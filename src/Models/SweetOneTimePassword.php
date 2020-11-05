@@ -15,4 +15,10 @@ class SweetOneTimePassword extends Model
      * @var string[]
      */
     protected $dates = ['last_send_at' , 'last_step_complete_at'];
+
+    public function getLastSendAt()
+    {
+        return $this->last_send_at->timestamp;
+    }
+
 }
