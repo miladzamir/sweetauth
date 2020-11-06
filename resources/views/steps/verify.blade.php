@@ -1,22 +1,37 @@
-<h3>verify your phone number!</h3>
-<br/>
-<form method="POST" action="{{ route('verify.request')  }}">
-    @csrf
-    <input name="token" type="number" placeholder="inter your token!" class="text" />
-    <br/>
-    <input type="submit" class="submit">
-    <br/>
-    <br/>
-</form>
+@extends('vendor.sweetauth.layout')
+@section('title')
+    تایید شماره
+@stop
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="mt-5">
+                    <form method="POST" action="{{ route('verify.request')  }}">
+                        @csrf
+                        <div class="form-group">
+                            <label for="inputToken">کد تایید</label>
+                            <input type="number" name="token" class="form-control" id="inputToken">
 
-@if(Session::has('isReceiveAndStored'))
-    کد ارسال برای شماره {{ Session::get('isReceiveAndStored') }} ارسال شد
-    <br /><br /><br />
-    ۱۵ دقیقه فرصت دارید تا کد تایید را وارد کنید
-@endif
+                            @if($errors->any())
+                                <span class="" role="alert">
+                                    <strong>{{ $errors->first() }}</strong>
+                                </span>
+                            @endif
+                        </div>
 
-@if (!empty($errors))
-    @foreach ($errors->all() as $error)
-        <div>{{$error ?? ''}}</div>
-    @endforeach
-@endif
+                        <div>
+                            @if(Session::has('isReceiveAndStored'))
+                                کد ارسال برای شماره {{ Session::get('isReceiveAndStored') }} ارسال شد
+                                <br /><br />
+                                ۱۵ دقیقه فرصت دارید تا کد تایید را وارد کنید
+                            @endif
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">ثبت</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop

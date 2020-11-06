@@ -1,24 +1,40 @@
-<h3>Last register Steppppp!!!!</h3>
-<br/>
+@extends('vendor.sweetauth.layout')
+@section('title')
+    تکمیل ثبت نام
+@stop
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="mt-5">
+                    <form method="POST" action="{{ route('create.user')  }}">
+                        @csrf
+                        <div class="form-group">
+                            <label for="inputPassword">رمز عبور</label>
+                            <input type="password" name="password" class="form-control" id="inputPassword">
+                            @if($errors->any())
+                                <span class="" role="alert">
+                                    <strong>{{ $errors->first() }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPasswordConfirmation">تکرار ‌رمز عبور</label>
+                            <input type="password" name="password_confirmation" class="form-control" id="inputPasswordConfirmation">
+                        </div>
 
-<form method="POST" action="{{ route('create.user')  }}">
-    @csrf
-    <input name="password" type="password" placeholder="inter your password!" class="text" value="" />
-    <input name="password_confirmation" type="password" placeholder="inter your password!" class="text" value="" />
-    <br/>
-    <input type="submit" class="submit">
-    <br/>
-    <br/>
-</form>
+                        <div>
+                            @if(Session::has('isReceiveAndStored'))
+                                کد ارسال برای شماره {{ Session::get('isReceiveAndStored') }} ارسال شد
+                                <br /><br />
+                                ۱۵ دقیقه فرصت دارید تا کد تایید را وارد کنید
+                            @endif
+                        </div>
 
-@if(session()->has('isVerify'))
-   {{ session('isVerify') }}
-@endif
-
-@if(!empty($errors))
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <div>{{$error ?? ''}}</div>
-        @endforeach
-    @endif
-@endif
+                        <button type="submit" class="btn btn-primary">ثبت</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
