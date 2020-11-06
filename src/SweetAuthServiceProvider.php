@@ -21,6 +21,10 @@ class SweetAuthServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/sweetauth'),
             ], 'views');
+
+            $this->publishes([
+                __DIR__.'/../resources/assets' => public_path('sweetauth'),
+            ], 'assets');
         }
 
         $router = $this->app->make(Router::class);

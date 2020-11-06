@@ -38,8 +38,8 @@ class VerifyRequestController extends Controller
                 ->withErrors(config('sweetauth.oneTimePassword.wrong_token_message'));
         }
 
-        Session::put('isVerify' , $request->$phoneNumber);
-        Session::flush('isReceiveAndStored');
+        Session::put('isVerify' , $phoneNumber);
+        Session::forget('isReceiveAndStored');
 
         return redirect()->route('register');
 

@@ -5,6 +5,7 @@ namespace MiladZamir\SweetAuth\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class CreateUserController extends Controller
@@ -22,11 +23,16 @@ class CreateUserController extends Controller
             $PasswordInputName => config('sweetauth.completeRegisterRules'),
         ]);
 
-        User::create([
+        $user = User::create([
             'phone' => session('isVerify'),
             'password' => bcrypt($request->password)
         ]);
-        Session::flush('isVerify');
+
+        Session::forget('isVerify');
+
+        Auth::loginUsingId($user->id);
+
+        return redirect('/home');
     }
 
 }
