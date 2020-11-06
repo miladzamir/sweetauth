@@ -25,14 +25,9 @@ class ReceiveRequestController extends Controller
     {
         $phoneInputName = config('sweetauth.oneTimePassword.phone_input');
 
-        $validator = validator::make($request->all(), [
+        $request->validate([
             $phoneInputName => config('sweetauth.validateRules'),
         ]);
-
-        if ($validator->fails()) {
-            return view('sweetauth::' . 'steps.' . config('sweetauth.oneTimePassword.phone_input_page_src'))
-                ->withErrors($validator);
-        }
 
         $phoneInformation = SweetOneTimePassword::where('phone', $request->$phoneInputName)->first();
 
@@ -41,8 +36,7 @@ class ReceiveRequestController extends Controller
                 $blockResult = $this->blockSystem($phoneInformation);
 
                 if ($blockResult != false) {
-                    return view('sweetauth::' . 'steps.' . config('sweetauth.oneTimePassword.phone_input_page_src'))
-                        ->withErrors($blockResult);
+                    return back()->withErrors($blockResult);
                 }
 
             } else {
@@ -54,8 +48,7 @@ class ReceiveRequestController extends Controller
                     $blockResult = $this->blockSystem($phoneInformation);
 
                     if ($blockResult != false) {
-                        return view('sweetauth::' . 'steps.' . config('sweetauth.oneTimePassword.phone_input_page_src'))
-                            ->withErrors($blockResult);
+                        return back()->withErrors($blockResult);
                     }
                 }
             }
@@ -68,16 +61,14 @@ class ReceiveRequestController extends Controller
 
         if ($phoneInformation != null && Carbon::now()->timestamp - $phoneInformation->getLastSendAt() < config('sweetauth')['oneTimePassword']['delay_allowed']) {
             $remainingAlertMessage = $this->getRemainingTimeMessage($phoneInformation, 'delay_allowed_message');
-            return view('sweetauth::' . 'steps.' . config('sweetauth.oneTimePassword.phone_input_page_src'))
-                ->withErrors($remainingAlertMessage);
+            return back()->withErrors($remainingAlertMessage);
         }
 
         //$sendVerificationSms = Orange::smsLookup($request->$phoneInputName, $randomDigitNumber, '', '', config('sweetauth')['oneTimePassword']['sms_template'])->original['status'];
         $sendVerificationSms = 200;
 
         if ($sendVerificationSms != 200) {
-            return view('sweetauth::' . 'steps.' . config('sweetauth.oneTimePassword.phone_input_page_src'))
-                ->withErrors(config('sweetauth.oneTimePassword.sms_failed_message'));
+            return back()->withErrors(config('sweetauth.oneTimePassword.sms_failed_message'));
         }
 
 
@@ -170,6 +161,10 @@ class ReceiveRequestController extends Controller
         return bin2hex(random_bytes(24));
     }
 
+    /**
+     * @param $phoneInformation
+     * @return false|string|string[]
+     */
     private function blockSystem($phoneInformation)
     {
         if (Carbon::now()->timestamp - $phoneInformation->getLastSendAt() > config('sweetauth.oneTimePassword.delay_unblock')) {
