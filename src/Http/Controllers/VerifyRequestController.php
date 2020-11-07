@@ -23,12 +23,12 @@ class VerifyRequestController extends Controller
             $tokenInputName => config('sweetauth.tokenValidateRules'),
         ]);
 
-        $phoneNumber = session('isReceiveAndStored');
+        $phoneNumber = (session()->has('isReceiveAndStored')) ? session('isReceiveAndStored') : session('isReceiveAndStoredForget');
 
         $phoneInformation = SweetOneTimePassword::where('phone', $phoneNumber)->first();
 
         if (Carbon::now()->timestamp - $phoneInformation->getLastSendAt() > config('sweetauth.oneTimePassword.accept_token_scope')){
-            Session::flush('isReceiveAndStored');
+            (session()->has('isReceiveAndStored')) ? Session::forget('isReceiveAndStored') : Session::forget('isReceiveAndStoredForget');
             return redirect()->route(config('sweetauth.oneTimePassword.register_route_name'))
                 ->withErrors(config('sweetauth.oneTimePassword.accept_token_scope_message'));
         }
@@ -39,11 +39,14 @@ class VerifyRequestController extends Controller
         }
 
         Session::put('isVerify' , $phoneNumber);
-        Session::forget('isReceiveAndStored');
 
-        return redirect()->route('register');
-
-
+        if (session()->has('isReceiveAndStored')){
+            Session::forget('isReceiveAndStored');
+            return redirect()->route('register');
+        }else{
+            Session::forget('isReceiveAndStoredForget');
+            return redirect()->route('reset.password');
+        }
     }
 
 }

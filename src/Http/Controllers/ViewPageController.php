@@ -26,4 +26,14 @@ class ViewPageController extends Controller
     {
         return view('sweetauth::steps.login');
     }
+
+    public function forgotPassword()
+    {
+        return view('sweetauth::steps.forgot_password');
+    }
+
+    public function resetPassword()
+    {
+        return view('sweetauth::steps.reset_password');
+    }
 }

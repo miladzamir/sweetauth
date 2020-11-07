@@ -25,9 +25,16 @@ class ReceiveRequestController extends Controller
     {
         $phoneInputName = config('sweetauth.oneTimePassword.phone_input');
 
-        $request->validate([
-            $phoneInputName => config('sweetauth.validateRules'),
-        ]);
+        $urlResult = $this->getUrlFrom($request);
+        if ($urlResult == 'forgotPassword'){
+            $request->validate([
+                $phoneInputName => config('sweetauth.validateRulesForget'),
+            ]);
+        }else{
+            $request->validate([
+                $phoneInputName => config('sweetauth.validateRules'),
+            ]);
+        }
 
         $phoneInformation = SweetOneTimePassword::where('phone', $request->$phoneInputName)->first();
 
@@ -80,8 +87,13 @@ class ReceiveRequestController extends Controller
             $this->createNewOneTimePassword($phoneInputName, $request, $randomDigitNumber, $rToken);
         }
 
-        Session::put('isReceiveAndStored' , $request->$phoneInputName);
-        return redirect()->route('verify');
+        if ($urlResult == 'forgotPassword'){
+            Session::put('isReceiveAndStoredForget' , $request->$phoneInputName);
+            return redirect()->route('verify');
+        }else{
+            Session::put('isReceiveAndStored' , $request->$phoneInputName);
+            return redirect()->route('verify');
+        }
     }
 
     /**
@@ -177,6 +189,15 @@ class ReceiveRequestController extends Controller
             $remainingAlertMessage = $this->getRemainingTimeMessage($phoneInformation, 'block_user_message');
             return $remainingAlertMessage;
         }
+    }
+    /**
+     * @param Request $request
+     * @return false|string[]
+     */
+    private function getUrlFrom()
+    {
+        $urlResult = explode('/', url()->previous());
+        return end($urlResult);
     }
 
 }
