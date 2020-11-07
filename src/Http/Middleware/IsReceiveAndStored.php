@@ -17,7 +17,7 @@ class IsReceiveAndStored
      */
     public function handle($request, Closure $next)
     {
-        if (session()->has('isReceiveAndStored')) {
+        if (session()->has('isReceiveAndStored') || session()->has('isReceiveAndStoredForget')) {
             return $next($request);
         }
 
