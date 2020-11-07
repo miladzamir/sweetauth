@@ -3,6 +3,7 @@
 return [
     'registerMethod' => 'otp',
     'validateRules' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
+    'validateRulesForget' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'exists:users,phone'],
     'tokenValidateRules' => ['required', 'numeric'],
     'completeRegisterRules' => ['required' ,'min:6' , 'confirmed'],
     'oneTimePassword' => [
@@ -20,9 +21,9 @@ return [
         'delay_between_request' => 60,
         'delay_count' => 60,
         'delay_unblock' => 10,
-        'delay_allowed' => 20,
-        'delay_allowed_message' => 'wait :20: second to next request',
-        'accept_token_scope' => 60,
+        'delay_allowed' => 5,
+        'delay_allowed_message' => 'wait :5: second to next request',
+        'accept_token_scope' => 20,
         'accept_token_scope_message' => 'زمان مجاز وارد کردن کد به پایان رسید دوباره !',
         'wrong_token_message' => 'code is wrong try a again!'
     ]
