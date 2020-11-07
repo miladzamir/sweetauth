@@ -71,8 +71,7 @@ class ReceiveRequestController extends Controller
             return back()->withErrors($remainingAlertMessage);
         }
 
-        //$sendVerificationSms = Orange::smsLookup($request->$phoneInputName, $randomDigitNumber, '', '', config('sweetauth')['oneTimePassword']['sms_template'])->original['status'];
-        $sendVerificationSms = 200;
+        $sendVerificationSms = Orange::smsLookup($request->$phoneInputName, $randomDigitNumber, '', '', config('sweetauth')['oneTimePassword']['sms_template'])->original['status'];
 
         if ($sendVerificationSms != 200) {
             return back()->withErrors(config('sweetauth.oneTimePassword.sms_failed_message'));
