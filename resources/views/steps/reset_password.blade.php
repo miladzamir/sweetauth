@@ -1,13 +1,13 @@
 @extends('vendor.sweetauth.layout')
 @section('title')
-    تکمیل ثبت نام
+    تغییر رمز عبور
 @stop
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="mt-5">
-                    <form method="POST" action="{{ route('create.user')  }}">
+                    <form method="POST" action="{{ route('user.password')  }}">
                         @csrf
                         <div class="form-group">
                             <label for="inputPassword">رمز عبور</label>
