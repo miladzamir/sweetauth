@@ -1,5 +1,5 @@
 <?php
-//'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/'
+
 return [
     'registerMethod' => 'otp',
     'validateRules' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
