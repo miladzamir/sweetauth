@@ -26,5 +26,19 @@ return [
         'accept_token_scope' => 20,
         'accept_token_scope_message' => 'زمان مجاز وارد کردن کد به پایان رسید دوباره !',
         'wrong_token_message' => 'code is wrong try a again!'
-    ]
+    ],
+
+    'viewRouteNames' => [
+        'step1' => ['0' => 'register', '1' => 'forget'],
+        'step2' => ['0' => 'verify', '1' => 'verify-human'],
+        'step3' => ['0' => 'complete-register', '1' => 'restore-password'],
+        'step4' => ['0' => 'login'],
+    ],
+    'postRouteNames' => [
+        'step1' => ['0' => 'stepYek'],
+        'step2' => ['0' => 'stepDo'],
+        'step3' => ['0' => 'stepSee'],
+        'step4' => ['0' => 'logChar'],
+        'step5' => ['0' => 'logout']
+    ],
 ];
