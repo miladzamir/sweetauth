@@ -19,11 +19,11 @@ class SweetAuthServiceProvider extends ServiceProvider
             ]);
 
             $this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/sweetauth'),
+                __DIR__.'/../resources/views' => resource_path('views/vendor/swAuth'),
             ], 'views');
 
             $this->publishes([
-                __DIR__.'/../resources/assets' => public_path('sweetauth'),
+                __DIR__.'/../resources/assets' => public_path('swAuth'),
             ], 'assets');
         }
 
@@ -32,7 +32,7 @@ class SweetAuthServiceProvider extends ServiceProvider
         $router->aliasMiddleware('is.receive.and.stored', IsReceiveAndStored::class);
         $router->aliasMiddleware('is.verify', IsVerify::class);
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'sweetauth');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'swAuth');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
 
