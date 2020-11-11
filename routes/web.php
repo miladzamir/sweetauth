@@ -31,7 +31,7 @@ Route::group(['namespace' => 'MiladZamir\SweetAuth\Http\Controllers\Handler', 'm
 });
 
 Route::group(['namespace' => 'MiladZamir\SweetAuth\Http\Controllers', 'middleware' => 'web'], function () {
-    Route::post(config('swauth.postRouteNames.step1.0'), 'StepOneController@ReceiveRequest')->name(config('swauth.postRouteNames.step1.0'));
+    Route::post(config('swauth.postRouteNames.step1.0'), 'StepOneController@configure')->name(config('swauth.postRouteNames.step1.0'));
     Route::post(config('swauth.postRouteNames.step2.0'), 'StepTwoController@ReceiveRequest')->name(config('swauth.postRouteNames.step2.0'));
     Route::post(config('swauth.postRouteNames.step3.0'), 'StepThreeController@ReceiveRequest')->name(config('swauth.postRouteNames.step3.0'));
 });

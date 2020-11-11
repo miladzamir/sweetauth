@@ -7,7 +7,7 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="mt-5">
-                    <form method="POST" action="{{ route('receive.request')  }}">
+                    <form method="POST" action="{{ route('stepYek')  }}">
                         @csrf
                         <div class="form-group">
                             <label for="inputPhone">phone number</label>

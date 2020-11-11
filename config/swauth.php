@@ -5,7 +5,7 @@ return [
     'validateRules' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
     'validateRulesForget' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'exists:users,phone'],
     'tokenValidateRules' => ['required', 'numeric'],
-    'completeRegisterRules' => ['required' ,'min:6' , 'confirmed'],
+    'completeRegisterRules' => ['required', 'min:6', 'confirmed'],
     'oneTimePassword' => [
         'phone_input' => 'phone',
         'token_input' => 'token',
@@ -41,4 +41,17 @@ return [
         'step4' => ['0' => 'logChar'],
         'step5' => ['0' => 'logout']
     ],
+    'inputs' => [
+        'step1' => 'phone',
+        'step2' => 'token',
+        'step3' => ['password', 'password_confirmation'],
+        'step4' => ['phone', 'password'],
+    ],
+    'validations' => [
+        'step1' => [
+            '0' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
+            '1' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'exists:users,phone']
+        ],
+        'step2' => [['required', 'numeric']]
+    ]
 ];
