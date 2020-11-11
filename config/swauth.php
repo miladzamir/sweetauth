@@ -53,5 +53,18 @@ return [
             '1' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'exists:users,phone']
         ],
         'step2' => [['required', 'numeric']]
+    ],
+    'orange' => [
+        'template' => 'verify'
+    ],
+    'mainConfig' => [
+        'messages' => [
+            'failedSendSms' => 'some message to return',
+            '' => '',
+            '' => ''
+
+        ],
+        'codeLength' => 4
     ]
+
 ];
