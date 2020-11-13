@@ -2,6 +2,7 @@
 
 namespace MiladZamir\SweetAuth\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class SweetOneTimePassword extends Model
@@ -15,11 +16,15 @@ class SweetOneTimePassword extends Model
     /**
      * @var string[]
      */
-    protected $dates = ['last_send_at' , 'last_step_complete_at'];
+    protected $dates = ['last_sms_send_at' , 'last_step_complete_at'];
 
-    public function getLastSendAt()
+    public function lastSmsSendAt()
     {
-        return $this->last_send_at->timestamp;
+        return $this->last_sms_send_at->timestamp;
+    }
+    public function lasStepCompleteAt()
+    {
+        return $this->last_step_complete_at->timestamp;
     }
 
 }
