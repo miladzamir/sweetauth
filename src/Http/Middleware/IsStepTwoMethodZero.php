@@ -4,7 +4,7 @@ namespace MiladZamir\SweetAuth\Http\Middleware;
 
 use Closure;
 
-class IsStepTwo
+class IsStepTwoMethodZero
 {
     /**
      * Handle an incoming request.
@@ -15,7 +15,7 @@ class IsStepTwo
      */
     public function handle($request, Closure $next)
     {
-        if (session()->has('step1.0') || session()->has('step1.1')) {
+        if (session()->has('step1.0')) {
             return $next($request);
         }
 

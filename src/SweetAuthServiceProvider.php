@@ -7,6 +7,8 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use MiladZamir\SweetAuth\Http\Middleware\IsRegisterStep;
 use MiladZamir\SweetAuth\Http\Middleware\IsStepTwo;
+use MiladZamir\SweetAuth\Http\Middleware\IsStepTwoMethodOne;
+use MiladZamir\SweetAuth\Http\Middleware\IsStepTwoMethodZero;
 use MiladZamir\SweetAuth\Http\Middleware\IsVerify;
 
 class SweetAuthServiceProvider extends ServiceProvider
@@ -29,7 +31,8 @@ class SweetAuthServiceProvider extends ServiceProvider
         }
 
         $router = $this->app->make(Router::class);
-        $router->aliasMiddleware('is.step.two', IsStepTwo::class);
+        $router->aliasMiddleware('is.step.two.method.zero', IsStepTwoMethodZero::class);
+        $router->aliasMiddleware('is.step.two.method.one', IsStepTwoMethodOne::class);
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'swAuth');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
