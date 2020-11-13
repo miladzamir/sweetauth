@@ -30,7 +30,7 @@ return [
 
     'viewRouteNames' => [
         'step1' => ['0' => 'register', '1' => 'forget'],
-        'step2' => ['0' => 'verify', '1' => 'verify-human'],
+        'step2' => ['0' => 'verify', '1' => 'verify-forget'],
         'step3' => ['0' => 'complete-register', '1' => 'restore-password'],
         'step4' => ['0' => 'login'],
     ],
@@ -60,10 +60,11 @@ return [
     'mainConfig' => [
         'messages' => [
             'failedSendSms' => 'some message to return',
-            '' => '',
-            '' => ''
-
+            'unBanAt' => 'Spam protection detected after :10: second',
+            'nextRequestAt' => 'To many request send. Try Again :10: second',
         ],
+        'delayBetweenRequest' => 60,
+        'delayAllowedRequest' => 60,
         'codeLength' => 4
     ]
 
