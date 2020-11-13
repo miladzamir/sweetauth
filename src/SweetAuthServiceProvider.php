@@ -6,6 +6,9 @@ use MiladZamir\SweetAuth\Http\Middleware\IsReceiveAndStored;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use MiladZamir\SweetAuth\Http\Middleware\IsRegisterStep;
+use MiladZamir\SweetAuth\Http\Middleware\IsStepThreeMethodOne;
+use MiladZamir\SweetAuth\Http\Middleware\IsStepThreeMethodPost;
+use MiladZamir\SweetAuth\Http\Middleware\IsStepThreeMethodZero;
 use MiladZamir\SweetAuth\Http\Middleware\IsStepTwo;
 use MiladZamir\SweetAuth\Http\Middleware\IsStepTwoMethodOne;
 use MiladZamir\SweetAuth\Http\Middleware\IsStepTwoMethodPost;
@@ -35,6 +38,10 @@ class SweetAuthServiceProvider extends ServiceProvider
         $router->aliasMiddleware('is.step.two.method.zero', IsStepTwoMethodZero::class);
         $router->aliasMiddleware('is.step.two.method.one', IsStepTwoMethodOne::class);
         $router->aliasMiddleware('is.step.two.method.post', IsStepTwoMethodPost::class);
+
+        $router->aliasMiddleware('is.step.three.method.zero', IsStepThreeMethodZero::class);
+        $router->aliasMiddleware('is.step.three.method.one', IsStepThreeMethodOne::class);
+        $router->aliasMiddleware('is.step.three.method.post', IsStepThreeMethodPost::class);
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'swAuth');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
