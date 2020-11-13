@@ -62,10 +62,13 @@ return [
             'failedSendSms' => 'some message to return',
             'unBanAt' => 'Spam protection detected after :10: second',
             'nextRequestAt' => 'To many request send. Try Again :10: second',
+            'outOfScope' => 'out of accept range retry',
+            'invalidVerify' => 'the token is invalid!!!',
         ],
         'delayBetweenRequest' => 60,
         'delayAllowedRequest' => 60,
-        'codeLength' => 4
+        'scopeRange' => 60,
+        'codeLength' => 4,
     ]
 
 ];
