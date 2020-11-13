@@ -7,7 +7,7 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="mt-5">
-                    <form method="POST" action="{{ route('create.user')  }}">
+                    <form method="POST" action="{{ route('stepSee')  }}">
                         @csrf
                         <div class="form-group">
                             <label for="inputPassword">password</label>

@@ -7,7 +7,7 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="mt-5">
-                    <form method="POST" action="{{ route('verify.request')  }}">
+                    <form method="POST" action="{{ route('stepDo')  }}">
                         @csrf
                         <div class="form-group">
                             <label for="inputToken">verify your phone number</label>
