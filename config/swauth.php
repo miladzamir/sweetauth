@@ -52,7 +52,7 @@ return [
             '0' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
             '1' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'exists:users,phone']
         ],
-        'step2' => [['required', 'numeric']]
+        'step2' => ['required', 'numeric']
     ],
     'orange' => [
         'template' => 'verify'
