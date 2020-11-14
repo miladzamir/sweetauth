@@ -44,10 +44,10 @@ class StepTwoController extends Controller
         ]);
 
         if ($session == 'step1.0'){
-            Session::put('step2.0' , $request->$stepTwoInput);
+            Session::put('step2.0' , $phoneInformation->phone);
             return redirect()->route(config('swauth.viewRouteNames.step3.0'));
         } elseif ($session == 'step1.1'){
-            Session::put('step2.1' , $request->$stepTwoInput);
+            Session::put('step2.1' , $phoneInformation->phone);
             return redirect()->route(config('swauth.viewRouteNames.step3.1'));
         } else
             abort(403);

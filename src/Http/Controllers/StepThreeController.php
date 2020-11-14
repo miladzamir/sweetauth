@@ -3,8 +3,11 @@
 namespace MiladZamir\SweetAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use MiladZamir\SweetAuth\Helper;
 use MiladZamir\SweetAuth\Models\SweetOneTimePassword;
 
@@ -30,6 +33,25 @@ class StepThreeController extends Controller
             }
         }
 
+        session()->forget($session);
+
+
+        if ($session == 'step2.0'){
+            $user = User::create([
+                'phone' => $phoneInformation->phone,
+                'password' => $request->input('password')
+            ]);
+        } elseif ($session == 'step2.1'){
+            $user = User::where('phone', $phoneInformation->phone)->update([
+                'phone' => $phoneInformation->phone,
+                'password' => $request->input('password')
+            ]);
+        } else
+            abort(403);
+
+        Auth::loginUsingId($user->id);
+
+        return redirect()->route(config('swauth.mainConfig.redirectLocation'));
 
         dd($request->all());
     }
