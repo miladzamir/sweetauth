@@ -20,5 +20,5 @@ Route::group(['namespace' => 'MiladZamir\SweetAuth\Http\Controllers', 'middlewar
 
 Route::group(['namespace' => 'App\Http\Controllers\Auth', 'middleware' => 'web'], function () {
     Route::post(config('swauth.postRouteNames.step4.0'), 'LoginController@login')->name(config('swauth.viewRouteNames.step4.0'));
-    Route::post(config('swauth.postRouteNames.step5.0'), 'LoginController@logout')->name(config('swauth.viewRouteNames.step5.0'));
+    Route::post(config('swauth.postRouteNames.step5.0'), 'LoginController@logout')->name(config('swauth.postRouteNames.step5.0'));
 });
