@@ -20,7 +20,7 @@ class StepTwoController extends Controller
 
         $phoneInformation = SweetOneTimePassword::where('phone', session($session))->first();
 
-        if (Carbon::now()->timestamp - $phoneInformation->lastSmsSendAt() > config('swauth.mainConfig.scopeRange')) {
+        if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() > config('swauth.mainConfig.scopeRange')) {
             session()->forget($session);
             if ($session == 'step1.0'){
                 return redirect()->route(config('swauth.viewRouteNames.step1.0'))
