@@ -39,6 +39,10 @@ class StepTwoController extends Controller
 
         session()->forget($session);
 
+        $phoneInformation->update([
+            'last_step_complete_at' => Carbon::now(),
+        ]);
+
         if ($session == 'step1.0'){
             Session::put('step2.0' , $request->$stepTwoInput);
             return redirect()->route(config('swauth.viewRouteNames.step3.0'));
