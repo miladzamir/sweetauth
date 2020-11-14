@@ -52,7 +52,8 @@ return [
             '0' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
             '1' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'exists:users,phone']
         ],
-        'step2' => ['required', 'numeric']
+        'step2' => ['required', 'numeric'],
+        'step3' => ['required', 'min:6', 'confirmed']
     ],
     'orange' => [
         'template' => 'verify'
@@ -64,11 +65,14 @@ return [
             'nextRequestAt' => 'To many request send. Try Again :10: second',
             'outOfScope' => 'out of accept range retry',
             'invalidVerify' => 'the token is invalid!!!',
+            'OutOfPasswordScope' => 'too late for send password retry!',
         ],
         'delayBetweenRequest' => 60,
         'delayAllowedRequest' => 60,
         'scopeRange' => 60,
+        'passwordScopeRange' => 60,
         'codeLength' => 4,
+        'redirectLocation' => 'home'
     ]
 
 ];
