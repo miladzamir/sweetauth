@@ -61,15 +61,15 @@ return [
     'mainConfig' => [
         'messages' => [
             'failedSendSms' => 'some message to return',
-            'unBanAt' => 'Spam protection detected after :10: second',
+            'unBanAt' => 'you are baned, spam protection detected after :10: second',
             'nextRequestAt' => 'To many request send. Try Again :10: second',
             'outOfScope' => 'out of accept range retry',
             'invalidVerify' => 'the token is invalid!!!',
             'OutOfPasswordScope' => 'too late for send password retry!',
         ],
         'delayBetweenRequest' => 60,
-        'delayAllowedRequest' => 2,
-        'scopeRange' => 10,
+        'delayAllowedRequest' => 10,
+        'scopeRange' => 20,
         'passwordScopeRange' => 20,
         'codeLength' => 4,
         'redirectLocation' => 'home'
