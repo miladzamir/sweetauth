@@ -20,7 +20,7 @@ class StepThreeController extends Controller
         $session = Helper::checkSession('step2.0', 'step2.1');
         $phoneInformation = SweetOneTimePassword::where('phone', session($session))->first();
 
-        if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() > config('swauth.mainConfig.passwordScopeRange')) {
+        if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() < config('swauth.mainConfig.passwordScopeRange') == false) {
             session()->forget($session);
             if ($session == 'step2.0'){
                 return redirect()->route(config('swauth.viewRouteNames.step1.0'))
@@ -48,7 +48,7 @@ class StepThreeController extends Controller
             ]);
         } else
             abort(403);
-
+        $user = User::where('phone', $phoneInformation->phone)->first();
         Auth::loginUsingId($user->id);
 
         return redirect()->route(config('swauth.mainConfig.redirectLocation'));

@@ -68,9 +68,9 @@ return [
             'OutOfPasswordScope' => 'too late for send password retry!',
         ],
         'delayBetweenRequest' => 60,
-        'delayAllowedRequest' => 60,
-        'scopeRange' => 60,
-        'passwordScopeRange' => 60,
+        'delayAllowedRequest' => 2,
+        'scopeRange' => 10,
+        'passwordScopeRange' => 20,
         'codeLength' => 4,
         'redirectLocation' => 'home'
     ]
