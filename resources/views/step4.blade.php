@@ -7,10 +7,10 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="mt-5">
-                    <form method="POST" action="{{ route('login')  }}">
+                    <form method="POST" action="{{ route('logChar')  }}">
                         @csrf
                         <div class="form-group">
-                            <label for="inputPassword">password</label>
+                            <label for="inputPassword">username</label>
                             <input type="number" name="phone" class="form-control" id="inputPhone" value="{{ old(('phone'))  }}">
 
                             @error('phone')
@@ -24,13 +24,6 @@
                         <div class="form-group">
                             <label for="inputPassword">password</label>
                             <input type="password" name="password" class="form-control" id="inputPassword">
-
-                            @error('phone')
-                            <span class="" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-
                         </div>
 
                         <button type="submit" class="btn btn-primary">Submit</button>
