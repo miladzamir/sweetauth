@@ -39,12 +39,12 @@ class StepThreeController extends Controller
         if ($session == 'step2.0'){
             $user = User::create([
                 'phone' => $phoneInformation->phone,
-                'password' => $request->input('password')
+                'password' => bcrypt($request->input('password'))
             ]);
         } elseif ($session == 'step2.1'){
             $user = User::where('phone', $phoneInformation->phone)->update([
                 'phone' => $phoneInformation->phone,
-                'password' => $request->input('password')
+                'password' => bcrypt($request->input('password'))
             ]);
         } else
             abort(403);
