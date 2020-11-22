@@ -4,14 +4,18 @@
 
 [![Latest Stable Version](https://poser.pugx.org/miladzamir/sweetauth/v)](//packagist.org/packages/miladzamir/sweetauth) [![Total Downloads](https://poser.pugx.org/miladzamir/sweetauth/downloads)](//packagist.org/packages/miladzamir/sweetauth) [![Latest Unstable Version](https://poser.pugx.org/miladzamir/sweetauth/v/unstable)](//packagist.org/packages/miladzamir/sweetauth) [![License](https://poser.pugx.org/miladzamir/sweetauth/license)](//packagist.org/packages/miladzamir/sweetauth)
 
+## ✨ Features
+- **Build mobile number authentication.** Very Fast
+- **Customize all routes.** Change to the way you like
+- **Customize all views.** replace your view file
 
-## Requirements
+## 🐛Requirements
 
  * PHP version 7.1 or higher
  * Laravel <= 7.4
  * [Orange Package](github.com/miladzamir/orange)
 
-## Installation:
+## 🔨Installation:
 
 ### 1. Composer
 ```
@@ -38,7 +42,7 @@ php artisan vendor:publish
 php artisan migrate
 ```
 
-### Explanation:
+### 🎓Explanation:
 >You can do your personalization by changing the \config\swauth.php file or resources\views.
 
 ##### _default Routes_:
@@ -48,4 +52,4 @@ php artisan migrate
 
 **And now you do not have to do anything! You have a mobile number authentication system :)**
 
-_ENJOY_
+_ENJOY 🍻:)_
