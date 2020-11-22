@@ -14,6 +14,7 @@
  * PHP version 7.1 or higher
  * Laravel <= 7.4
  * [Orange Package](github.com/miladzamir/orange)
+ * [Laravel Ui Package V2.*](https://github.com/laravel/ui)
 
 ## 🔨Installation:
 
