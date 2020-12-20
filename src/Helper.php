@@ -8,8 +8,11 @@ class Helper
 {
     private $url;
 
-    public static function getLastUrl()
+    public static function getLastUrl($full = null)
     {
+        if ($full != null)
+            return explode('/', url()->previous());
+
         $url = explode('/', url()->previous());
         return end($url);
     }
@@ -18,6 +21,11 @@ class Helper
     {
         $url = explode('/', $request->url());
         return end($url);
+    }
+
+    public static function getCurrentUrl()
+    {
+        return explode('/', url()->current());
     }
 
     public static function checkSession($session1, $session2)
