@@ -24,25 +24,7 @@ class SweetAuthServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/swauth.php' => config_path('swauth.php'),
                 __DIR__ . '/../database/migrations/create_sweet_one_time_passwords.php.stub' => database_path('migrations/' . '2020_11_01_174513_create_sweet_one_time_passwords_table.php'),
             ]);
-
-            $this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/swAuth'),
-            ], 'views');
-
-            $this->publishes([
-                __DIR__.'/../resources/assets' => public_path('swAuth'),
-            ], 'assets');
         }
-
-        $router = $this->app->make(Router::class);
-        $router->aliasMiddleware('is.step.two.method.zero', IsStepTwoMethodZero::class);
-        $router->aliasMiddleware('is.step.two.method.one', IsStepTwoMethodOne::class);
-        $router->aliasMiddleware('is.step.two.method.post', IsStepTwoMethodPost::class);
-
-        $router->aliasMiddleware('is.step.three.method.zero', IsStepThreeMethodZero::class);
-        $router->aliasMiddleware('is.step.three.method.one', IsStepThreeMethodOne::class);
-        $router->aliasMiddleware('is.step.three.method.post', IsStepThreeMethodPost::class);
-
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'swAuth');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
