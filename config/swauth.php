@@ -1,32 +1,125 @@
 <?php
 
 return [
-    'viewRouteNames' => [
-        'step1' => ['0' => 'register', '1' => 'forget'],
-        'step2' => ['0' => 'verify', '1' => 'verify-forget'],
-        'step3' => ['0' => 'complete-register', '1' => 'restore-password'],
-        'step4' => ['0' => 'login'],
-    ],
-    'postRouteNames' => [
-        'step1' => ['0' => 'stepYek'],
-        'step2' => ['0' => 'stepDo'],
-        'step3' => ['0' => 'stepSee'],
-        'step4' => ['0' => 'logChar'],
-        'step5' => ['0' => 'logout']
-    ],
-    'inputs' => [
-        'step1' => 'phone',
-        'step2' => 'token',
-        'step3' => ['password', 'password_confirmation'],
-        'step4' => ['phone', 'password'],
-    ],
-    'validations' => [
-        'step1' => [
-            '0' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'],
-            '1' => ['required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'exists:users,phone']
+    'table' => [
+        'users' => [
+            'table' => 'users',
+            'username' => 'phone',
+            'viewRouteNames' => [
+                'client.register' => [
+                    'validations' => [
+                        'required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'
+                    ],
+                    'session' => 'st1',
+                    'nextRoute' => 'client.verify'
+                ],
+                'client.verify' => [
+                    'validations' => [
+                        'required', 'required', 'numeric'
+                    ],
+                    'session' => ['old' =>'st1','new' =>'st2'],
+                    'prevRoute' => 'client.register',
+                    'nextRoute' => 'client.completeRegister'
+                ],
+                'client.completeRegister' => [
+                    'validations' => [
+                        ['required', 'min:6', 'confirmed'],
+                        ['required']
+                    ],
+                    'session' => ['old' =>'st2','new' =>'st2'],
+                    'prevRoute' => 'client.register'
+                ],
+
+                'client.forget' =>[
+                    'validations' => [
+                        'required', 'required', 'numeric'
+                    ],
+                    'session' => 'st11',
+                    'nextRoute' => 'client.verifyForget'
+                ],
+                'client.verifyForget'=> [
+                    'validations' => [
+                        'required', 'required', 'numeric'
+                    ],
+                    'session' => ['old' =>'st11','new' =>'st22'],
+                    'prevRoute' => 'client.forget',
+                    'nextRoute' => 'client.restorePassword'
+                ],
+                'client.restorePassword' => [
+                    'validations' => [
+                        'required', 'min:6', 'confirmed'
+                    ],
+                    'session' => ['old' =>'st22','new' =>'st33'],
+                    'prevRoute' => 'client.forget'
+                ],
+            ],
+            'inputs' => [
+                'step1' => 'phone',
+                'step2' => 'token',
+                'step3' => ['password', 'name']
+            ],
+            'guard' => 'web',
+            'redirectLocation' => 'home'
         ],
-        'step2' => ['required', 'numeric'],
-        'step3' => ['required', 'min:6', 'confirmed']
+        'consultants' => [
+            'table' => 'consultants',
+            'username' => 'phone',
+            'viewRouteNames' => [
+                'consultant.register' => [
+                    'validations' => [
+                        'required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'
+                    ],
+                    'session' => 'st1',
+                    'nextRoute' => 'consultant.verify'
+                ],
+                'consultant.verify' => [
+                    'validations' => [
+                        'required', 'required', 'numeric'
+                    ],
+                    'session' => ['old' =>'st1','new' =>'st2'],
+                    'prevRoute' => 'consultant.register',
+                    'nextRoute' => 'consultant.completeRegister'
+                ],
+                'consultant.completeRegister' => [
+                    'validations' => [
+                        ['required', 'min:6', 'confirmed'],
+                        ['required']
+                    ],
+                    'session' => ['old' =>'st2','new' =>'st2'],
+                    'prevRoute' => 'client.register'
+                ],
+
+                'consultant.forget' =>[
+                    'validations' => [
+                        'required', 'required', 'numeric'
+                    ],
+                    'session' => 'st11',
+                    'nextRoute' => 'consultant.verifyForget'
+                ],
+                'consultant.verifyForget'=> [
+                    'validations' => [
+                        'required', 'required', 'numeric'
+                    ],
+                    'session' => ['old' =>'st11','new' =>'st22'],
+                    'prevRoute' => 'consultant.forget',
+                    'nextRoute' => 'consultant.restorePassword'
+                ],
+                'consultant.restorePassword' => [
+                    'validations' => [
+                        'required', 'min:6', 'confirmed'
+                    ],
+                    'session' => ['old' =>'st22','new' =>'st33'],
+                    'prevRoute' => 'consultant.forget'
+                ],
+            ],
+            'inputs' => [
+                'step1' => 'phone',
+                'step2' => 'token',
+                'step3' => ['password', 'name']
+            ],
+            'guard' => 'web',
+            'redirectLocation' => 'home'
+        ],
     ],
     'orange' => [
         'template' => 'verify'
@@ -44,8 +137,7 @@ return [
         'delayAllowedRequest' => 10,
         'scopeRange' => 20,
         'passwordScopeRange' => 20,
-        'codeLength' => 4,
-        'redirectLocation' => 'home'
+        'codeLength' => 4
     ]
 
 ];
