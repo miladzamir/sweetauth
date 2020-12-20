@@ -13,52 +13,58 @@ class StepTwoController extends Controller
 {
     public function configure(Request $request)
     {
-        $stepTwoInput = config('swauth.inputs.step2');
+        $url = array_slice(Helper::getLastUrl(true), -2);
+        $config = implode('.', $url);
 
-        self::validationToken($request, $stepTwoInput);
-        $session = Helper::checkSession('step1.0', 'step1.1');
+        $tbl = null;
+        foreach (config('swauth.table') as $table){
+            foreach ($table['viewRouteNames'] as $key=>$view){
+                if ($config == $key)
+                    $tbl = $table;
+            }
+        }
+        $stepTwoInput = config('swauth.table.'. $tbl['table'] .'.inputs.step2');
 
-        $phoneInformation = SweetOneTimePassword::where('phone', session($session))->first();
+        $viewRouteName = config('swauth.table.'. $tbl['table'] . '.viewRouteNames');
+        $this_ = $viewRouteName[$config] ?? null;
+
+        if (isset($this_['validations']))
+            self::validationRequest($request, $stepTwoInput, $this_['validations']);
+        else
+            abort(403);
+
+        $oldSession = session($this_['session']['old']);
+        $phoneInformation = SweetOneTimePassword::where('phone', $oldSession)->first();
 
         if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() < config('swauth.mainConfig.scopeRange') == false) {
-            session()->forget($session);
-            if ($session == 'step1.0'){
-                return redirect()->route(config('swauth.viewRouteNames.step1.0'))
-                    ->withErrors(config('swauth.mainConfig.messages.outOfScope'));
-            }elseif ($session == 'step1.1'){
-                return redirect()->route(config('swauth.viewRouteNames.step1.1'))
-                    ->withErrors(config('swauth.mainConfig.messages.outOfScope'));
-            }else{
-                abort(403);
-            }
+            session()->forget($oldSession);
+            return redirect()->route($this_['prevRoute'])
+                ->withErrors(config('swauth.mainConfig.messages.outOfScope'));
         }
 
         if ($phoneInformation->token != $request->$stepTwoInput){
-            return back()->withErrors(config('swauth.mainConfig.messages.invalidVerify'));
+            return redirect()->back()->withErrors(config('swauth.mainConfig.messages.invalidVerify'));
         }
 
-        session()->forget($session);
+        session()->forget($oldSession);
 
         $phoneInformation->update([
             'last_step_complete_at' => Carbon::now(),
         ]);
 
-        if ($session == 'step1.0'){
-            Session::put('step2.0' , $phoneInformation->phone);
-            return redirect()->route(config('swauth.viewRouteNames.step3.0'));
-        } elseif ($session == 'step1.1'){
-            Session::put('step2.1' , $phoneInformation->phone);
-            return redirect()->route(config('swauth.viewRouteNames.step3.1'));
+
+        if (isset($this_)){
+            Session::put($this_['session']['new'], $oldSession);
+            return redirect()->route($this_['nextRoute']);
         } else
             abort(403);
 
-
     }
 
-    private function validationToken($request, $input)
+    private function validationRequest($request, $input, $validations)
     {
         $request->validate([
-            $input => config('swauth.validations.step2'),
+            $input => $validations,
         ]);
     }
 }

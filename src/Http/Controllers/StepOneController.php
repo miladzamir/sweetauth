@@ -15,17 +15,29 @@ class StepOneController extends Controller
 {
     public function configure(Request $request)
     {
-        $stepOneInput = config('swauth.inputs.step1');
+        $url = array_slice(Helper::getLastUrl(true), -2);
+        $config = implode('.', $url);
 
-        if (Helper::getLastUrl() == config('swauth.viewRouteNames.step1.0'))
-            self::validationZero($request, $stepOneInput);
-        elseif (Helper::getLastUrl() == config('swauth.viewRouteNames.step1.1'))
-            self::validationOne($request, $stepOneInput);
+        $tbl = null;
+        foreach (config('swauth.table') as $table){
+            foreach ($table['viewRouteNames'] as $key=>$view){
+                if ($config == $key)
+                    $tbl = $table;
+            }
+        }
+
+        $stepOneInput = config('swauth.table.'. $tbl['table'] .'.inputs.step1');
+
+        $viewRouteName = config('swauth.table.'. $tbl['table'] . '.viewRouteNames');
+        $this_ = $viewRouteName[$config] ?? null;
+
+
+        if (isset($this_['validations']))
+            self::validationRequest($request, $stepOneInput, $this_['validations']);
         else
             abort(403);
 
-        $phoneInformation = SweetOneTimePassword::where(config('swauth.inputs.step1') ,$request->$stepOneInput)->first();
-
+        $phoneInformation = SweetOneTimePassword::where(config('swauth.table.'. $tbl['table'] . '.inputs.step1') ,$request->$stepOneInput)->first();
 
         if ($phoneInformation != null){
             if ($this->blockSystem($phoneInformation) != 'userAllowed'){
@@ -41,7 +53,7 @@ class StepOneController extends Controller
         $randomDigitNumber = $this->createRandomDigitNumber();
 
         $sendVerificationSms = Orange::smsLookup($request->$stepOneInput, $randomDigitNumber, '', '', config('swauth.orange.template'))->status();
-
+        $sendVerificationSms = 200;
         if ($sendVerificationSms != 200) {
             return back()->withErrors(config('swauth.mainConfig.messages.failedSendSms'));
         }
@@ -51,31 +63,18 @@ class StepOneController extends Controller
         else
             $this->UpdateOneTimePassword($phoneInformation, $stepOneInput, $request, $randomDigitNumber);
 
-
-        if (Helper::getLastUrl() == config('swauth.viewRouteNames.step1.0')){
-            Session::put('step1.0' , $request->$stepOneInput);
-            return redirect()->route(config('swauth.viewRouteNames.step2.0'));
-        }
-        elseif (Helper::getLastUrl() == config('swauth.viewRouteNames.step1.1')){
-            Session::put('step1.1' , $request->$stepOneInput);
-            return redirect()->route(config('swauth.viewRouteNames.step2.1'));
-        }
-        else
+        if (isset($this_)){
+            Session::put($this_['session'], $request->$stepOneInput);
+            return redirect()->route($this_['nextRoute']);
+        } else
             abort(403);
 
     }
 
-    private function validationZero($request, $input)
+    private function validationRequest($request, $input, $validations)
     {
         $request->validate([
-            $input => config('swauth.validations.step1.0'),
-        ]);
-    }
-
-    private function validationOne($request, $input)
-    {
-        $request->validate([
-            $input => config('swauth.validations.step1.1'),
+            $input => $validations,
         ]);
     }
 

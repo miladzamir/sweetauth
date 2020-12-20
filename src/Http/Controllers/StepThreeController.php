@@ -13,46 +13,77 @@ use MiladZamir\SweetAuth\Models\SweetOneTimePassword;
 
 class StepThreeController extends Controller
 {
-    public function configure(Request $request){
+    public function configure(Request $request)
+    {
 
-        $stepThreeInputs = config('swauth.inputs.step3');
+        $url = array_slice(Helper::getLastUrl(true), -2);
+        $config = implode('.', $url);
 
-        $session = Helper::checkSession('step2.0', 'step2.1');
-        $phoneInformation = SweetOneTimePassword::where('phone', session($session))->first();
-
-        if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() < config('swauth.mainConfig.passwordScopeRange') == false) {
-            session()->forget($session);
-            if ($session == 'step2.0'){
-                return redirect()->route(config('swauth.viewRouteNames.step1.0'))
-                    ->withErrors(config('swauth.mainConfig.messages.OutOfPasswordScope'));
-            }elseif ($session == 'step2.1'){
-                return redirect()->route(config('swauth.viewRouteNames.step1.1'))
-                    ->withErrors(config('swauth.mainConfig.messages.OutOfPasswordScope'));
-            }else{
-                abort(403);
+        $tbl = null;
+        foreach (config('swauth.table') as $table) {
+            foreach ($table['viewRouteNames'] as $key => $view) {
+                if ($config == $key)
+                    $tbl = $table;
             }
         }
+        $stepThreeInputs = config('swauth.table.' . $tbl['table'] . '.inputs.step3');
 
-        session()->forget($session);
+        $viewRouteName = config('swauth.table.' . $tbl['table'] . '.viewRouteNames');
+        $this_ = $viewRouteName[$config] ?? null;
 
-
-        if ($session == 'step2.0'){
-            $user = User::create([
-                'phone' => $phoneInformation->phone,
-                'password' => bcrypt($request->input('password'))
-            ]);
-        } elseif ($session == 'step2.1'){
-            $user = User::where('phone', $phoneInformation->phone)->update([
-                'phone' => $phoneInformation->phone,
-                'password' => bcrypt($request->input('password'))
-            ]);
-        } else
+        if (isset($this_['validations']))
+            self::validationRequest($request, $stepThreeInputs, $this_['validations']);
+        else
             abort(403);
-        $user = User::where('phone', $phoneInformation->phone)->first();
-        Auth::loginUsingId($user->id);
 
-        return redirect()->route(config('swauth.mainConfig.redirectLocation'));
+        $oldSession = session($this_['session']['old']);
 
-        dd($request->all());
+        $phoneInformation = SweetOneTimePassword::where('phone', $oldSession)->first();
+
+        if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() < config('swauth.mainConfig.passwordScopeRange') == false) {
+            session()->forget($oldSession);
+            return redirect()->route($this_['prevRoute'])
+                ->withErrors(config('swauth.mainConfig.messages.outOfScope'));
+        }
+
+        session()->forget($oldSession);
+
+        $model = rtrim($tbl['table'], "s");
+        $model = ucfirst($model);
+        $stepOneInput = config('swauth.table.'. $tbl['table'] .'.inputs.step1');
+
+        $data = [];
+        $NamespacedModel = '\\App\\' . $model;
+
+        if ($request->input($stepThreeInputs[1]) != null){
+            $data[$stepOneInput] = $phoneInformation->$stepOneInput;
+            $data[$stepThreeInputs[0]] = bcrypt($request->input('password'));
+            $data[$stepThreeInputs[1]] = $request->input($stepThreeInputs[1]);
+            $NamespacedModel::create($data);
+        }else{
+            $NamespacedModel::where($stepOneInput, $phoneInformation->$stepOneInput)->update(
+                array($stepThreeInputs[0] => bcrypt($request->input('password')))
+            );
+        }
+
+        $user = $NamespacedModel::where($stepOneInput, $phoneInformation->$stepOneInput)->first();
+        \auth()->guard(config('swauth.table.'. $tbl['table'] .'.guard'))->loginUsingId($user);
+
+        return redirect()->route(config('swauth.table.'. $tbl['table'] .'.redirectLocation'));
+    }
+
+    private function validationRequest($request, $input, $validations)
+    {
+        if (is_array($input)) {
+            foreach ($input as $key => $inp) {
+                $request->validate([
+                    $inp => $validations[$key],
+                ]);
+            }
+        } else {
+            $request->validate([
+                $input => $validations,
+            ]);
+        }
     }
 }
