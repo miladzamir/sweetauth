@@ -1,14 +1,14 @@
 <?php
-
 return [
     'table' => [
         'users' => [
+            'key' => 'users',
             'table' => 'users',
-            'username' => 'phone',
+            'username' => 'username',
             'viewRouteNames' => [
                 'client.register' => [
                     'validations' => [
-                        'required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'
+                        'required', 'regex:/(9)[0-9]{9}/', 'digits:10', 'numeric', 'unique:users'
                     ],
                     'session' => 'st1',
                     'nextRoute' => 'client.verify'
@@ -32,7 +32,7 @@ return [
 
                 'client.forget' =>[
                     'validations' => [
-                        'required', 'required', 'numeric'
+                        'required', 'regex:/(9)[0-9]{9}/', 'digits:10', 'numeric', 'exists:users,username'
                     ],
                     'session' => 'st11',
                     'nextRoute' => 'client.verifyForget'
@@ -54,29 +54,30 @@ return [
                 ],
             ],
             'inputs' => [
-                'step1' => 'phone',
+                'step1' => 'username',
                 'step2' => 'token',
                 'step3' => ['password', 'name']
             ],
             'guard' => 'web',
-            'redirectLocation' => 'home'
+            'redirectLocation' => 'client.index'
         ],
         'consultants' => [
-            'table' => 'consultants',
-            'username' => 'phone',
+            'key' => 'consultants',
+            'table' => 'users',
+            'username' => 'username',
             'viewRouteNames' => [
                 'consultant.register' => [
                     'validations' => [
-                        'required', 'regex:/(09)[0-9]{9}/', 'digits:11', 'numeric', 'unique:users'
+                        'required', 'regex:/(9)[0-9]{9}/', 'digits:10', 'numeric', 'unique:users'
                     ],
-                    'session' => 'st1',
+                    'session' => 'st11',
                     'nextRoute' => 'consultant.verify'
                 ],
                 'consultant.verify' => [
                     'validations' => [
                         'required', 'required', 'numeric'
                     ],
-                    'session' => ['old' =>'st1','new' =>'st2'],
+                    'session' => ['old' =>'st11','new' =>'st22'],
                     'prevRoute' => 'consultant.register',
                     'nextRoute' => 'consultant.completeRegister'
                 ],
@@ -85,22 +86,22 @@ return [
                         ['required', 'min:6', 'confirmed'],
                         ['required']
                     ],
-                    'session' => ['old' =>'st2','new' =>'st2'],
-                    'prevRoute' => 'client.register'
+                    'session' => ['old' =>'st22','new' =>''],
+                    'prevRoute' => 'consultant.register'
                 ],
 
                 'consultant.forget' =>[
                     'validations' => [
-                        'required', 'required', 'numeric'
+                        'required', 'regex:/(9)[0-9]{9}/', 'digits:10', 'numeric', 'exists:users,username'
                     ],
-                    'session' => 'st11',
+                    'session' => 'st111',
                     'nextRoute' => 'consultant.verifyForget'
                 ],
                 'consultant.verifyForget'=> [
                     'validations' => [
                         'required', 'required', 'numeric'
                     ],
-                    'session' => ['old' =>'st11','new' =>'st22'],
+                    'session' => ['old' =>'st111','new' =>'st222'],
                     'prevRoute' => 'consultant.forget',
                     'nextRoute' => 'consultant.restorePassword'
                 ],
@@ -108,18 +109,18 @@ return [
                     'validations' => [
                         'required', 'min:6', 'confirmed'
                     ],
-                    'session' => ['old' =>'st22','new' =>'st33'],
+                    'session' => ['old' =>'st222','new' =>''],
                     'prevRoute' => 'consultant.forget'
                 ],
             ],
             'inputs' => [
-                'step1' => 'phone',
+                'step1' => 'username',
                 'step2' => 'token',
                 'step3' => ['password', 'name']
             ],
             'guard' => 'web',
-            'redirectLocation' => 'home'
-        ],
+            'redirectLocation' => 'consultant.index'
+        ]
     ],
     'orange' => [
         'template' => 'verify'
