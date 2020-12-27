@@ -23,9 +23,9 @@ class StepTwoController extends Controller
                     $tbl = $table;
             }
         }
-        $stepTwoInput = config('swauth.table.'. $tbl['table'] .'.inputs.step2');
+        $stepTwoInput = config('swauth.table.'. $tbl['key'] .'.inputs.step2');
 
-        $viewRouteName = config('swauth.table.'. $tbl['table'] . '.viewRouteNames');
+        $viewRouteName = config('swauth.table.'. $tbl['key'] . '.viewRouteNames');
         $this_ = $viewRouteName[$config] ?? null;
 
         if (isset($this_['validations']))
@@ -34,7 +34,7 @@ class StepTwoController extends Controller
             abort(403);
 
         $oldSession = session($this_['session']['old']);
-        $phoneInformation = SweetOneTimePassword::where('phone', $oldSession)->first();
+        $phoneInformation = SweetOneTimePassword::where('username', $oldSession)->first();
 
         if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() < config('swauth.mainConfig.scopeRange') == false) {
             session()->forget($oldSession);
