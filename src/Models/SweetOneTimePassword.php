@@ -10,7 +10,7 @@ class SweetOneTimePassword extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['phone', 'token', 'is_verify', 'is_block',
+    protected $fillable = ['username', 'token', 'is_verify', 'is_block',
         'request_times', 'last_send_status', 'last_step_complete_at', 'last_sms_send_at'];
 
     /**
