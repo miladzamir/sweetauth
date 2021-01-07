@@ -26,9 +26,9 @@ class StepThreeController extends Controller
                     $tbl = $table;
             }
         }
-        $stepThreeInputs = config('swauth.table.' . $tbl['key'] . '.inputs.step3');
+        $stepThreeInputs = config('swauth.table.' . $tbl['table'] . '.inputs.step3');
 
-        $viewRouteName = config('swauth.table.' . $tbl['key'] . '.viewRouteNames');
+        $viewRouteName = config('swauth.table.' . $tbl['table'] . '.viewRouteNames');
         $this_ = $viewRouteName[$config] ?? null;
 
         if (isset($this_['validations']))
@@ -38,7 +38,7 @@ class StepThreeController extends Controller
 
         $oldSession = session($this_['session']['old']);
 
-        $phoneInformation = SweetOneTimePassword::where('username', $oldSession)->first();
+        $phoneInformation = SweetOneTimePassword::where('phone', $oldSession)->first();
 
         if (Carbon::now()->timestamp - $phoneInformation->lasStepCompleteAt() < config('swauth.mainConfig.passwordScopeRange') == false) {
             session()->forget($oldSession);
@@ -48,9 +48,9 @@ class StepThreeController extends Controller
 
         session()->forget($oldSession);
 
-        $model = rtrim($tbl['key'], "s");
+        $model = rtrim($tbl['table'], "s");
         $model = ucfirst($model);
-        $stepOneInput = config('swauth.table.'. $tbl['key'] .'.inputs.step1');
+        $stepOneInput = config('swauth.table.'. $tbl['table'] .'.inputs.step1');
 
         $data = [];
         $NamespacedModel = '\\App\\' . $model;
@@ -67,9 +67,9 @@ class StepThreeController extends Controller
         }
 
         $user = $NamespacedModel::where($stepOneInput, $phoneInformation->$stepOneInput)->first();
-        \auth()->guard(config('swauth.table.'. $tbl['key'] .'.guard'))->loginUsingId($user);
+        \auth()->guard(config('swauth.table.'. $tbl['table'] .'.guard'))->loginUsingId($user->id);
 
-        return redirect()->route(config('swauth.table.'. $tbl['key'] .'.redirectLocation'));
+        return redirect()->route(config('swauth.table.'. $tbl['table'] .'.redirectLocation'));
     }
 
     private function validationRequest($request, $input, $validations)

@@ -26,9 +26,9 @@ class StepOneController extends Controller
             }
         }
 
-        $stepOneInput = config('swauth.table.'. $tbl['key'] .'.inputs.step1');
+        $stepOneInput = config('swauth.table.'. $tbl['table'] .'.inputs.step1');
 
-        $viewRouteName = config('swauth.table.'. $tbl['key'] . '.viewRouteNames');
+        $viewRouteName = config('swauth.table.'. $tbl['table'] . '.viewRouteNames');
         $this_ = $viewRouteName[$config] ?? null;
 
 
@@ -37,7 +37,7 @@ class StepOneController extends Controller
         else
             abort(403);
 
-        $phoneInformation = SweetOneTimePassword::where(config('swauth.table.'. $tbl['key'] . '.inputs.step1') ,$request->$stepOneInput)->first();
+        $phoneInformation = SweetOneTimePassword::where(config('swauth.table.'. $tbl['table'] . '.inputs.step1') ,$request->$stepOneInput)->first();
 
         if ($phoneInformation != null){
             if ($this->blockSystem($phoneInformation) != 'userAllowed'){
@@ -92,7 +92,7 @@ class StepOneController extends Controller
     private function createNewOneTimePassword($stepOneInput, Request $request, int $randomDigitNumber)
     {
         SweetOneTimePassword::create([
-            'username' => $request->$stepOneInput,
+            'phone' => $request->$stepOneInput,
             'token' => $randomDigitNumber,
             'last_step_complete_at' => Carbon::now(),
             'last_sms_send_at' => Carbon::now()
@@ -102,7 +102,7 @@ class StepOneController extends Controller
     private function UpdateOneTimePassword($phoneInformation, $stepOneInput, Request $request, int $randomDigitNumber): void
     {
         $phoneInformation->update([
-            'username' => $request->$stepOneInput,
+            'phone' => $request->$stepOneInput,
             'token' => $randomDigitNumber,
             'request_times' => DB::raw('request_times + 1'),
             'last_step_complete_at' => Carbon::now(),
